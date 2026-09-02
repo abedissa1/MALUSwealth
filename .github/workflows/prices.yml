@@ -1,0 +1,81 @@
+# .github/workflows/prices.yml
+# Fetches share prices and commits them as prices.json.
+# GitHub runs this on a schedule — the app just reads the file.
+
+name: Update prices
+
+on:
+  schedule:
+    - cron: "*/15 13-21 * * 1-5"   # every 15 min, US market hours (UTC), Mon-Fri
+    - cron: "0 6 * * *"            # once each morning, so weekends stay fresh
+  workflow_dispatch:                # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  quotes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch quotes
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime, os
+
+          def read_tickers():
+              if os.path.exists("tickers.txt"):
+                  with open("tickers.txt") as f:
+                      return [l.strip().upper() for l in f if l.strip()
+                              and not l.startswith("#")]
+              return ["AAPL"]
+
+          def get(url):
+              req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+              return urllib.request.urlopen(req, timeout=20).read().decode()
+
+          def yahoo(sym):
+              u = ("https://query1.finance.yahoo.com/v8/finance/chart/"
+                   f"{sym}?interval=1d&range=1d")
+              m = json.loads(get(u))["chart"]["result"][0]["meta"]
+              px = m.get("regularMarketPrice") or m.get("previousClose")
+              return (float(px), m.get("currency", "USD")) if px else None
+
+          def stooq(sym):
+              s = sym.lower() if "." in sym else sym.lower() + ".us"
+              rows = get(f"https://stooq.com/q/l/?s={s}&f=sd2t2ohlcv&h&e=csv").strip().split("\n")
+              cols = rows[0].lower().split(",")
+              vals = rows[1].split(",")
+              px = float(vals[cols.index("close")])
+              return (px, "USD") if px > 0 else None
+
+          out = {}
+          for sym in read_tickers():
+              for src in (yahoo, stooq):
+                  try:
+                      r = src(sym)
+                      if r:
+                          out[sym] = {"price": round(r[0], 4), "ccy": r[1],
+                                      "src": src.__name__}
+                          break
+                  except Exception as e:
+                      print(f"{sym} {src.__name__} failed: {e}")
+              else:
+                  print(f"{sym}: no quote")
+
+          data = {"updated": datetime.datetime.now(datetime.timezone.utc)
+                              .isoformat(timespec="seconds"),
+                  "quotes": out}
+          with open("prices.json", "w") as f:
+              json.dump(data, f, indent=1)
+          print(json.dumps(data, indent=1))
+          PY
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "malus-prices"
+          git config user.email "actions@github.com"
+          git add prices.json
+          git diff --staged --quiet || git commit -m "prices $(date -u +%H:%M)"
+          git push
