@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-14T20:05:32+00:00",
+ "updated": "2026-09-14T20:24:06+00:00",
  "quotes": {
   "AAPL": {
    "price": 333.08,
@@ -22,12 +22,12 @@
    "src": "yahoo"
   },
   "VRT": {
-   "price": 237.425,
+   "price": 237.39,
    "ccy": "USD",
    "src": "yahoo"
   },
   "BRK-B": {
-   "price": 514.9,
+   "price": 514.95,
    "ccy": "USD",
    "src": "yahoo"
   },
