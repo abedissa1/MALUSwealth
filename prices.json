@@ -1,33 +1,33 @@
 {
- "updated": "2026-09-18T18:49:48+00:00",
+ "updated": "2026-09-18T19:05:35+00:00",
  "quotes": {
   "AAPL": {
-   "price": 336.15,
+   "price": 335.76,
    "ccy": "USD",
    "src": "yahoo"
   },
   "GOOG": {
-   "price": 347.681,
+   "price": 347.23,
    "ccy": "USD",
    "src": "yahoo"
   },
   "AMZN": {
-   "price": 254.34,
+   "price": 254.23,
    "ccy": "USD",
    "src": "yahoo"
   },
   "CEG": {
-   "price": 257.065,
+   "price": 257.06,
    "ccy": "USD",
    "src": "yahoo"
   },
   "VRT": {
-   "price": 248.62,
+   "price": 249.555,
    "ccy": "USD",
    "src": "yahoo"
   },
   "BRK-B": {
-   "price": 511.44,
+   "price": 510.41,
    "ccy": "USD",
    "src": "yahoo"
   },
