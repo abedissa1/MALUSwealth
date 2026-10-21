@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-20T23:33:22+00:00",
+ "updated": "2026-10-21T11:07:42+00:00",
  "quotes": {
   "AAPL": {
    "price": 339.5,
@@ -32,7 +32,7 @@
    "src": "yahoo"
   },
   "SPY5.L": {
-   "price": 770.89,
+   "price": 771.75,
    "ccy": "USD",
    "src": "yahoo"
   }
